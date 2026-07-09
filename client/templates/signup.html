@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — AkiliPesa</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts (Plus Jakarta Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Header Navigation -->
+    <header class="w-full px-6 py-4 max-w-6xl mx-auto flex justify-between items-center">
+        <a href="index.html" class="text-2xl font-extrabold tracking-tight text-emerald-700">
+            Akili<span class="text-slate-900">Pesa</span>
+        </a>
+        <a href="{% url 'login_user' %}" class="text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors flex items-center gap-1">
+            Already have an account? Sign In →
+        </a>
+    </header>
+
+    <!-- Main Form Wrapper -->
+    <main class="flex-grow flex items-center justify-center px-4 py-6">
+        <div class="w-full max-w-[440px] bg-white border border-slate-200/80 rounded-2xl shadow-xl p-6 sm:p-8">
+
+            <!-- Context Header -->
+            <div class="text-center mb-6">
+                <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Create your AkiliPesa Wallet</h1>
+                <p class="text-xs text-slate-500 mt-1.5">Join live trivia rooms and win from pool pots instantly</p>
+            </div>
+
+            <!-- Form Submissions -->
+            <form action="#" method="POST" class="space-y-4">
+
+                <!-- Field 1: Choose Username -->
+                <div>
+                    <label for="username" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        Choose Username
+                    </label>
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        required
+                        placeholder="e.g., Kimani_Brainiac"
+                        maxlength="20"
+                        pattern="^[a-zA-Z0-9_]{3,20}$"
+                        class="block w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 text-sm font-semibold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all"
+                    >
+                    <p class="text-[11px] text-slate-400 mt-1">3-20 letters, numbers, or underscores. visible to teammates.</p>
+                </div>
+
+                <!-- Field 2: M-Pesa Safaricom Phone Line -->
+                <div>
+                    <label for="phone" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                        M-Pesa Safaricom Line
+                    </label>
+                    <div class="relative rounded-xl shadow-xs">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                            <span class="text-slate-400 font-mono text-sm font-semibold">+254</span>
+                        </div>
+                        <input
+                            type="tel"
+                            name="phone"
+                            id="phone"
+                            required
+                            placeholder="7XXXXXXXX"
+                            maxlength="9"
+                            pattern="[0-9]{9}"
+                            class="block w-full pl-16 pr-4 py-3 border border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 placeholder-slate-400 font-mono text-sm font-bold focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all"
+                        >
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">Must match your M-Pesa account for deposits & instant payouts.</p>
+                </div>
+
+                <!-- Field 3: Create Wallet 4-Digit PIN -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="pin" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            Create 4-Digit PIN
+                        </label>
+                        <input
+                            type="password"
+                            name="pin"
+                            id="pin"
+                            required
+                            placeholder="••••"
+                            maxlength="4"
+                            pattern="[0-9]{4}"
+                            inputmode="numeric"
+                            class="block w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 tracking-widest text-center text-lg font-bold focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all"
+                        >
+                    </div>
+                    <div>
+                        <label for="confirm-pin" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            Confirm PIN
+                        </label>
+                        <input
+                            type="password"
+                            name="confirm-pin"
+                            id="confirm-pin"
+                            required
+                            placeholder="••••"
+                            maxlength="4"
+                            pattern="[0-9]{4}"
+                            inputmode="numeric"
+                            class="block w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50/50 text-slate-900 tracking-widest text-center text-lg font-bold focus:outline-none focus:ring-2 focus:ring-emerald-600/20 focus:border-emerald-600 transition-all"
+                        >
+                    </div>
+                </div>
+
+                <!-- Terms and Aggreements Checkbox -->
+                <div class="flex items-start pt-2">
+                    <div class="flex items-center h-5">
+                        <input
+                            id="terms"
+                            name="terms"
+                            type="checkbox"
+                            required
+                            class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500/30 cursor-pointer"
+                        >
+                    </div>
+                    <div class="ml-2.5 text-xs">
+                        <label for="terms" class="font-medium text-slate-600 select-none">
+                            I certify that I am 18 years or older and agree to AkiliPesa's
+                            <a href="#" class="text-emerald-700 font-bold hover:underline">Terms of Service</a>.
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Registration Action Button -->
+                <button
+                    type="submit"
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-3.5 rounded-xl transition-all shadow-md shadow-emerald-600/5 active:scale-98 cursor-pointer mt-3"
+                >
+                    Create Free Wallet & Join
+                </button>
+            </form>
+
+        </div>
+    </main>
+
+    <!-- Structural Minimal Footer -->
+    <footer class="w-full bg-white border-t border-slate-200 py-6 text-center text-[11px] text-slate-400 font-medium">
+        <div class="max-w-6xl mx-auto px-4">
+            <p>AkiliPesa verifies users via encrypted cryptographic handshakes. © 2026 AkiliPesa Tech Ltd.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AkiliPesa — Live Trivia Rooms</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+          rel="stylesheet">
+    <style>
+        :root {
+            --ink: #16231F;
+            --paper: #FFFFFFFF;
+            --paper-2: #ffffff;
+            --emerald: #0B6B4F;
+            --emerald-dark: #084D39;
+            --gold: #B9862F;
+            --rose: #A83A3A;
+            --line: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--paper);
+            color: var(--ink);
+        }
+
+        .font-display {
+            font-family: 'Fraunces', serif;
+            font-variation-settings: 'opsz' 60;
+        }
+
+        .font-mono {
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .ledger {
+            background-image: repeating-linear-gradient(to bottom, transparent, transparent 34px, var(--line) 34px, var(--line) 35px);
+        }
+
+        .receipt-edge {
+            -webkit-mask-image: radial-gradient(circle 5px at 8px 8px, transparent 5px, black 5.5px), radial-gradient(circle 5px at calc(100% - 8px) 8px, transparent 5px, black 5.5px);
+            -webkit-mask-composite: intersect;
+            mask-composite: intersect;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<!-- Top bar -->
+<header class="border-b border-[var(--line)] bg-[var(--paper)]/95 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+        <span class="font-display text-2xl font-semibold tracking-tight">Akili<span
+                style="color:var(--emerald)">Pesa</span></span>
+        <nav class="hidden md:flex items-center gap-9 text-[13px] font-semibold text-[var(--ink)]/60">
+            <a href="#how-it-works" class="hover:text-[var(--ink)] transition-colors">How it works</a>
+            <a href="#modes" class="hover:text-[var(--ink)] transition-colors">Room formats</a>
+            <a href="#trust" class="hover:text-[var(--ink)] transition-colors">Fair play &amp; compliance</a>
+        </nav>
+        <a href="{% url 'login_user' %}" class="text-white font-semibold px-5 py-2.5 rounded-lg transition-all text-sm"
+           style="background:var(--emerald)">
+            Open wallet
+        </a>
+    </div>
+</header>
+
+<!-- Hero -->
+<section class="py-16 lg:py-24 border-b border-[var(--line)]">
+    <div class="max-w-6xl mx-auto px-5">
+        <div class="grid lg:grid-cols-12 gap-14 items-center">
+
+            <div class="lg:col-span-7">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-semibold mb-7 border"
+                     style="border-color:var(--line); color:var(--emerald-dark); background:var(--paper-2)">
+                    <span class="w-1.5 h-1.5 rounded-full" style="background:var(--emerald)"></span>
+                    Next scheduled room opens 6:00 PM EAT
+                </div>
+                <h1 class="font-display text-[2.75rem] sm:text-6xl font-semibold leading-[1.05] tracking-tight mb-6">
+                    Ten questions.<br>
+                    One pot. <span style="color:var(--emerald)">Whoever's fastest and sharpest wins it.</span>
+                </h1>
+                <p class="text-[15px] sm:text-base text-[var(--ink)]/65 mb-9 max-w-lg leading-relaxed">
+                    Join a scheduled trivia room for a fixed stake of KSh 50 or 100. Answer correctly and quickly —
+                    every second you take costs you points. Play solo, or bring three friends into a Chama room.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'login_user' %}"
+                       class="text-white font-semibold text-[15px] px-7 py-3.5 rounded-lg shadow-sm transition-all text-center"
+                       style="background:var(--emerald)">
+                        Enter the lobby
+                    </a>
+                    <a href="#how-it-works"
+                       class="border font-semibold text-[15px] px-7 py-3.5 rounded-lg transition-all text-center hover:bg-[var(--paper-2)]"
+                       style="border-color:var(--line)">
+                        See how a round works
+                    </a>
+                </div>
+                <p class="text-[12px] text-[var(--ink)]/45 mt-5">Players must be 21 or older. Set a deposit limit before
+                    you play — see Fair Play &amp; Compliance below.</p>
+            </div>
+
+            <!-- Phone mock -->
+            <div class="lg:col-span-5 flex justify-center">
+                <div class="w-full max-w-[300px] bg-white border border-[var(--line)] rounded-[2rem] shadow-lg overflow-hidden p-5 flex flex-col justify-between aspect-[9/18]">
+                    <div class="flex justify-between items-center border-b border-[var(--line)] pb-3">
+            <span class="text-[11px] font-bold flex items-center gap-1.5" style="color:var(--emerald)">
+              <span class="w-2 h-2 rounded-full" style="background:var(--emerald)"></span> Room #401 · Live
+            </span>
+                        <span class="font-mono text-[11px] px-2 py-0.5 rounded font-semibold"
+                              style="background:var(--paper-2)">Pot 5,600</span>
+                    </div>
+
+                    <div class="my-auto py-5 space-y-5">
+                        <div class="text-center">
+                            <div class="w-10 h-10 rounded-full border-2 flex items-center justify-center text-xs font-bold mx-auto"
+                                 style="border-color:var(--emerald); color:var(--emerald-dark); background:var(--paper-2)">
+                                04s
+                            </div>
+                            <h3 class="text-[13px] font-semibold mt-3 leading-snug px-2">How many years ago did Kenya's
+                                SGR begin commercial operation?</h3>
+                        </div>
+                        <div class="space-y-2">
+                            <button class="w-full py-2.5 px-3.5 rounded-lg border text-left text-[12px] font-medium text-[var(--ink)]/60"
+                                    style="border-color:var(--line); background:var(--paper-2)">7 years
+                            </button>
+                            <button class="w-full py-2.5 px-3.5 rounded-lg border text-left text-[12px] font-semibold flex justify-between items-center"
+                                    style="border-color:var(--emerald); background:#EAF4EF; color:var(--emerald-dark)">
+                                <span>9 years</span>
+                                <span class="text-[9px] text-white px-1.5 py-0.5 rounded"
+                                      style="background:var(--emerald)">Selected</span>
+                            </button>
+                            <button class="w-full py-2.5 px-3.5 rounded-lg border text-left text-[12px] font-medium text-[var(--ink)]/60"
+                                    style="border-color:var(--line); background:var(--paper-2)">11 years
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="text-center text-[10px] text-[var(--ink)]/40 font-medium">Score decays every 100ms — speed
+                        and accuracy both count</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- How it works -->
+<section id="how-it-works" class="py-20 border-b border-[var(--line)]">
+    <div class="max-w-6xl mx-auto px-5">
+        <div class="max-w-xl mb-14">
+            <p class="text-[11px] font-bold tracking-widest uppercase mb-3" style="color:var(--emerald)">How it
+                works</p>
+            <h2 class="font-display text-3xl font-semibold tracking-tight">Three steps, no ambiguity</h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-px" style="background:var(--line)">
+            <div class="p-8 bg-[var(--paper)]">
+                <h3 class="text-base font-bold mb-2">Stake &amp; get matched</h3>
+                <p class="text-[13px] text-[var(--ink)]/60 leading-relaxed">Deposit by M-Pesa and join the next
+                    scheduled room. If fewer than 2 players are present at kickoff, your stake is returned to your
+                    wallet automatically — no round runs with only one player.</p>
+            </div>
+            <div class="p-8 bg-[var(--paper)]">
+                <h3 class="text-base font-bold mb-2">Answer under the clock</h3>
+                <p class="text-[13px] text-[var(--ink)]/60 leading-relaxed">Each of the 10 questions carries a fixed
+                    answer window. Points are awarded for correctness first, then reduced the longer you take to respond
+                    — so recall and reflex both matter.</p>
+            </div>
+            <div class="p-8 bg-[var(--paper)]">
+                <h3 class="text-base font-bold mb-2">Instant, transparent payout</h3>
+                <p class="text-[13px] text-[var(--ink)]/60 leading-relaxed">The room closes, the leaderboard locks, and
+                    winnings are released straight to your wallet. The pot breakdown — including our share — is shown to
+                    every player before the room starts.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Room formats + ledger -->
+<section id="modes" class="py-20 border-b border-[var(--line)]" style="background:var(--paper-2)">
+    <div class="max-w-6xl mx-auto px-5">
+        <div class="grid lg:grid-cols-12 gap-14 items-start">
+
+            <div class="lg:col-span-5">
+                <p class="text-[11px] font-bold tracking-widest uppercase mb-3" style="color:var(--emerald)">Room
+                    formats</p>
+                <h2 class="font-display text-3xl font-semibold tracking-tight mb-5">Play alone, or bring your squad</h2>
+                <p class="text-[14px] text-[var(--ink)]/60 leading-relaxed mb-8">
+                    Every room is scheduled in advance, so you always know when it starts and what it costs to enter.
+                </p>
+                <div class="space-y-3">
+                    <div class="bg-[var(--paper)] p-5 rounded-xl border border-[var(--line)]">
+                        <h4 class="font-bold text-sm mb-1">Solo room</h4>
+                        <p class="text-[13px] text-[var(--ink)]/60 leading-relaxed">Enter for KSh 50 or KSh 100. You
+                            compete individually against everyone else in that room.</p>
+                    </div>
+                    <div class="bg-[var(--paper)] p-5 rounded-xl border border-[var(--line)]">
+                        <h4 class="font-bold text-sm mb-1">Chama room (teams of 4)</h4>
+                        <p class="text-[13px] text-[var(--ink)]/60 leading-relaxed">Four players pool KSh 200. The
+                            team's answer on each question is set by majority vote among the four; if the vote ties, the
+                            fastest response wins the tie.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ledger card -->
+            <div class="lg:col-span-7">
+                <div class="bg-white rounded-2xl border border-[var(--line)] shadow-sm overflow-hidden receipt-edge">
+                    <div class="px-7 pt-7 pb-4 border-b border-dashed border-[var(--line)]">
+                        <p class="text-[10px] font-bold tracking-widest uppercase text-[var(--ink)]/40">Pot breakdown —
+                            worked example</p>
+                        <p class="font-display text-lg font-semibold mt-1">One Chama room, full at 40 players</p>
+                    </div>
+                    <div class="px-7 py-2 ledger font-mono text-[13px]">
+                        <div class="flex justify-between items-center h-[34px] text-[var(--ink)]/70">
+                            <span>Stake per Chama squad (4 players)</span>
+                            <span class="font-semibold text-[var(--ink)]">KSh 200</span>
+                        </div>
+                        <div class="flex justify-between items-center h-[34px] text-[var(--ink)]/70">
+                            <span>Squads in room</span>
+                            <span class="font-semibold text-[var(--ink)]">40</span>
+                        </div>
+                        <div class="flex justify-between items-center h-[34px] text-[var(--ink)]/70">
+                            <span>Total pot collected</span>
+                            <span class="font-semibold text-[var(--ink)]">KSh 8,000</span>
+                        </div>
+                        <div class="flex justify-between items-center h-[34px]" style="color:var(--rose)">
+                            <span>Platform share (25%)</span>
+                            <span class="font-semibold">− KSh 2,000</span>
+                        </div>
+                        <div class="flex justify-between items-center h-[34px] font-semibold">
+                            <span>Prize pool distributed (75%)</span>
+                            <span>KSh 6,000</span>
+                        </div>
+                    </div>
+                    <div class="px-7 py-5 flex justify-between items-center" style="background:#EAF4EF">
+                        <span class="text-[13px] font-semibold" style="color:var(--emerald-dark)">Per member, winning squad</span>
+                        <span class="font-display text-2xl font-bold" style="color:var(--emerald-dark)">KSh 1,500</span>
+                    </div>
+                </div>
+                <p class="text-[12px] text-[var(--ink)]/45 mt-3">Figures scale with actual room size. Withholding tax on
+                    net winnings is deducted per Kenya Revenue Authority requirements before payout.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Trust / compliance -->
+<section id="trust" class="py-20 border-b border-[var(--line)]">
+    <div class="max-w-6xl mx-auto px-5">
+        <div class="max-w-xl mb-12">
+            <p class="text-[11px] font-bold tracking-widest uppercase mb-3" style="color:var(--emerald)">Fair play &amp;
+                compliance</p>
+            <h2 class="font-display text-3xl font-semibold tracking-tight">Built to be checked, not just trusted</h2>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="font-bold text-sm mb-2">Licensed operation</h3>
+                <p class="text-[13px] text-[var(--ink)]/60 leading-relaxed">AkiliPesa operates under licensing from
+                    Kenya's gambling regulator. Our licence number and status are verifiable and posted here before
+                    public launch.</p>
+            </div>
+            <div>
+                <h3 class="font-bold text-sm mb-2">Responsible play</h3>
+                <p class="text-[13px] text-[var(--ink)]/60 leading-relaxed">Set a daily or weekly deposit limit, take a
+                    break with self-exclusion, and see your running stake history at any time in your wallet.</p>
+            </div>
+            <div>
+                <h3 class="font-bold text-sm mb-2">Escrowed stakes</h3>
+                <p class="text-[13px] text-[var(--ink)]/60 leading-relaxed">Stakes are held in a segregated account
+                    until a room settles. If a room doesn't reach minimum players, funds return automatically — no
+                    manual request needed.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-12 text-center">
+    <div class="max-w-6xl mx-auto px-5 space-y-2">
+        <p class="text-[12px] text-[var(--ink)]/50">© 2026 AkiliPesa. All rights reserved.</p>
+        <p class="max-w-md mx-auto text-[11px] text-[var(--ink)]/35 leading-relaxed">
+            Play involves financial risk. Must be 18 or older.
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>

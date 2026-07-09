@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Support Dashboard • AkiliPesa</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --emerald: #14a84c;
+            --emerald-dark: #0e7d37;
+            --ink: #0f172a;
+            --line: #e2e8f0;
+            --paper-bg: #f8fafc;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--paper-bg); color: var(--ink); }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="w-full bg-white border-b border-[var(--line)] px-6 h-16 flex justify-between items-center shrink-0 z-10">
+        <div class="flex items-center gap-6">
+            <span class="text-xl font-extrabold tracking-tight">Akili<span style="color:var(--emerald)">Pesa</span> <span class="text-[10px] uppercase font-bold tracking-widest text-slate-400 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md ml-1.5">Support Desk</span></span>
+            <nav class="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-500">
+                <a href="#" class="text-[var(--ink)] border-b-2 border-[var(--emerald)] py-5">Recovery Tickets</a>
+                <a href="#" class="hover:text-[var(--ink)] py-5 transition-colors">User Audit Ledger</a>
+                <a href="#" class="hover:text-[var(--ink)] py-5 transition-colors">Refund Escrows</a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="text-right hidden sm:block">
+                <p class="text-xs font-bold text-slate-800">John Doe</p>
+                <p class="text-[10px] font-medium text-slate-400">Agent ID: #4092</p>
+            </div>
+            <a href="#" class="text-xs font-bold text-slate-500 hover:text-rose-600 border border-[var(--line)] px-3 py-1.5 rounded-xl transition-colors">Logout</a>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-6 grid lg:grid-cols-12 gap-6">
+
+        <!-- Left Panel: Unassigned Queue Index -->
+        <section class="lg:col-span-5 flex flex-col gap-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-base font-extrabold text-slate-900">Incoming Recovery Tickets</h2>
+                    <p class="text-[11px] text-slate-400 font-medium">Pending manual identification check</p>
+                </div>
+                <span class="text-xs font-bold px-2 py-0.5 bg-rose-50 text-rose-600 border border-rose-100 rounded-md">3 Open</span>
+            </div>
+
+            <!-- Search Field -->
+            <div class="relative">
+                <input type="text" placeholder="Search by phone, email, or ticket ID..." class="w-full bg-white border border-[var(--line)] rounded-xl pl-4 pr-10 py-2.5 text-xs font-medium placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 transition-all">
+                <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs opacity-40">🔍</span>
+            </div>
+
+            <!-- Ticket Rows -->
+            <div class="space-y-2 overflow-y-auto max-h-[calc(100vh-240px)]">
+                <!-- Row 1: Selected state -->
+                <div class="bg-white p-4 rounded-xl border border-[var(--emerald)] shadow-xs cursor-pointer transition-all">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] font-mono font-bold text-slate-400">TICKET #8492</span>
+                        <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 bg-rose-100 text-rose-700 rounded-sm">Urgent</span>
+                    </div>
+                    <h3 class="text-xs font-bold text-slate-900 mb-0.5">+254 712 345 678</h3>
+                    <p class="text-[11px] text-slate-500 truncate mb-2">Forgot PIN and lost access to verification email after...</p>
+                    <div class="flex justify-between items-center text-[10px] text-slate-400 font-medium">
+                        <span>Submitted 14 mins ago</span>
+                        <span class="font-bold text-[var(--emerald-dark)]">Active Review →</span>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="bg-white p-4 rounded-xl border border-[var(--line)] hover:border-slate-300 cursor-pointer transition-all">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-[10px] font-mono font-bold text-slate-400">TICKET #8491</span>
+                        <span class="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 bg-slate-100 text-slate-600 rounded-sm">Standard</span>
+                    </div>
+                    <h3 class="text-xs font-bold text-slate-900 mb-0.5">+254 722 987 654</h3>
+                    <p class="text-[11px] text-slate-500 truncate mb-2">Device got stolen, need to freeze wallet transfer permissions immediately.</p>
+                    <div class="flex justify-between items-center text-[10px] text-slate-400 font-medium">
+                        <span>Submitted 2 hours ago</span>
+                        <span class="font-semibold text-slate-600">Unassigned</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Panel: Auditor Workspace View -->
+        <section class="lg:col-span-7 bg-white border border-[var(--line)] rounded-2xl p-6 shadow-xs flex flex-col justify-between">
+
+            <!-- Workspace Content Details -->
+            <div class="space-y-6">
+                <!-- Header -->
+                <div class="border-b border-[var(--line)] pb-4 flex justify-between items-start">
+                    <div>
+                        <span class="text-[10px] font-mono font-bold text-slate-400">Auditing Ticket #8492</span>
+                        <h1 class="text-lg font-extrabold text-slate-900 mt-0.5">+254 712 345 678</h1>
+                    </div>
+                    <span class="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Investigating
+                    </span>
+                </div>
+
+                <!-- User Declarations / Submitted Form Data -->
+                <div class="space-y-3">
+                    <h4 class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Submitted Case Parameters</h4>
+                    <div class="grid sm:grid-cols-2 gap-4 bg-[var(--paper-bg)] p-4 rounded-xl border border-[var(--line)]">
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-medium block">Contact Email Specified</span>
+                            <span class="text-xs font-bold text-slate-800">user.recovery@gmail.com</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-slate-400 font-medium block">Declared Identity Matching</span>
+                            <span class="text-xs font-bold text-slate-800">Otieno Kiprop M.</span>
+                        </div>
+                    </div>
+                    <div class="bg-[var(--paper-bg)] p-4 rounded-xl border border-[var(--line)]">
+                        <span class="text-[10px] text-slate-400 font-medium block mb-1">Issue Details &amp; Claims</span>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            "Forgot my entry password. I cannot access my old email because I lost the recovery key. My last active wallet balance was around KSh 1,250 and I participated in a KSh 50 Solo room last night around 8 PM."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Automated Integrity Lookup (Database cross reference) -->
+                <div class="space-y-3">
+                    <h4 class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Cross-Reference Verification Match</h4>
+                    <div class="border border-emerald-200 bg-emerald-50/40 p-4 rounded-xl space-y-3">
+                        <div class="grid sm:grid-cols-3 gap-2 text-center sm:text-left">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-medium block">System User Record</span>
+                                <span class="text-xs font-bold text-slate-800">Active Account Found</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-medium block">Actual Wallet Balance</span>
+                                <span class="text-xs font-extrabold text-[var(--emerald-dark)]">KSh 1,245.50</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-medium block">Last Activity Stamp</span>
+                                <span class="text-xs font-bold text-slate-800">Yesterday, 20:14 EAT</span>
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-emerald-800 font-semibold border-t border-emerald-100 pt-2 flex items-center gap-1.5">
+                            <span>✓</span> Database baseline matching indicates user claims correlate accurately with actual vault logs.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Trigger Interface Block -->
+            <div class="border-t border-[var(--line)] pt-4 mt-6 flex flex-col sm:flex-row justify-between gap-3 items-center">
+                <span class="text-[10px] text-slate-400 font-medium leading-tight text-center sm:text-left">
+                    Approving will route a temporary workspace password reset pass directly to <strong>user.recovery@gmail.com</strong>.
+                </span>
+                <div class="flex gap-2 w-full sm:w-auto shrink-0">
+                    <button type="button" class="flex-1 sm:flex-initial text-slate-500 font-bold text-xs border border-[var(--line)] px-4 py-2.5 rounded-xl transition-all hover:bg-slate-50 cursor-pointer">
+                        Reject / Flag Fraud
+                    </button>
+                    <button type="button" class="flex-1 sm:flex-initial text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-sm cursor-pointer hover:opacity-90" style="background:var(--emerald)">
+                        Approve &amp; Send Reset
+                    </button>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Operational System Footer -->
+    <footer class="w-full border-t border-[var(--line)] bg-white py-3.5 px-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-[10px] font-mono text-slate-400 tracking-wide">
+        <div>AkiliPesa Support Grid • Node Cluster Delta</div>
+        <div>Session Timeout Protocol Active</div>
+    </footer>
+
+</body>
+</html>

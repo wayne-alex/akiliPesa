@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Room #401 — AkiliPesa</title>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16231F;
+    --paper-2:#F5F4F0;
+    --emerald:#0B6B4F;
+    --emerald-dark:#084D39;
+    --emerald-tint:#EAF4EF;
+    --gold:#B9862F;
+    --gold-tint:#FBF3E4;
+    --rose:#A83A3A;
+    --rose-tint:#F7EAEA;
+    --line:#E7E5DE;
+  }
+  body{ font-family:'Inter',sans-serif; background:#FFFFFF; color:var(--ink); }
+  .font-display{ font-family:'Fraunces', serif; font-variation-settings:'opsz' 60; }
+  .font-mono{ font-family:'IBM Plex Mono', monospace; }
+
+  .answer-btn{ transition: all .15s ease; }
+  .answer-btn:active{ transform: scale(0.98); }
+  .answer-btn.locked{ pointer-events:none; }
+  .answer-btn.correct{ border-color: var(--emerald) !important; background: var(--emerald-tint) !important; }
+  .answer-btn.incorrect{ border-color: var(--rose) !important; background: var(--rose-tint) !important; }
+  .answer-btn.dim{ opacity: .4; }
+
+  #timer-bar{ transition: width 1s linear, background-color .3s ease; }
+
+  .dot{ width:7px; height:7px; border-radius:999px; background:var(--line); }
+  .dot.answered{ background:var(--emerald); }
+  .dot.current{ background:var(--ink); }
+
+  @keyframes pulse-pot{ 0%,100%{opacity:1} 50%{opacity:.5} }
+  .pulse{ animation: pulse-pot 1.6s ease-in-out infinite; }
+
+  #board-overlay{
+    position:fixed; inset:0; background:rgba(22,35,31,0.35);
+    opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:50;
+  }
+  #board-overlay.open{ opacity:1; pointer-events:auto; }
+  #board-panel{
+    position:fixed; right:0; top:0; bottom:0; width:100%; max-width:380px;
+    background:#fff; transform:translateX(100%); transition:transform .3s ease; z-index:51;
+    box-shadow:-8px 0 24px rgba(0,0,0,0.08);
+    display:flex; flex-direction:column;
+  }
+  #board-panel.open{ transform:translateX(0); }
+
+  .rank-row{ transition: background-color .3s ease; }
+  .rank-badge{ width:22px; height:22px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; }
+
+  /* Celebration petals */
+  #petal-layer{
+    position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:60;
+  }
+  .petal{
+    position:absolute; top:-40px; border-radius:60% 0 60% 0;
+    animation-name: petal-fall; animation-timing-function: linear; animation-fill-mode:forwards;
+  }
+  @keyframes petal-fall{
+    0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity:1; }
+    100% { transform: translateY(110vh) translateX(var(--drift)) rotate(480deg); opacity:0.9; }
+  }
+</style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+<div id="petal-layer"></div>
+
+<header class="border-b border-[var(--line)] bg-white/95 backdrop-blur-md sticky top-0 z-40">
+  <div class="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full pulse" style="background:var(--emerald)"></span>
+      <span class="text-[12px] font-bold">Room #401</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-[11px] font-mono font-semibold px-2 py-1 rounded" style="background:var(--paper-2)">Pot <span id="pot-amount">6,000</span></span>
+      <button id="board-toggle" class="flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1.5 rounded-lg border" style="border-color:var(--line)">
+        🏆 <span id="your-rank-chip">#3</span>
+      </button>
+    </div>
+  </div>
+  <div class="max-w-lg mx-auto px-4 pb-3 flex items-center gap-1.5" id="progress-dots"></div>
+</header>
+
+<main class="flex-grow flex flex-col max-w-lg w-full mx-auto px-4 pt-6 pb-28 sm:pb-8">
+
+  <div class="flex items-center justify-between mb-3">
+    <span class="text-[11px] font-bold tracking-widest uppercase text-[var(--ink)]/40">Question <span id="q-num">4</span> of 10</span>
+    <div class="flex items-center gap-2">
+      <span id="timer-num" class="font-mono text-sm font-bold" style="color:var(--emerald-dark)">60s</span>
+      <div class="relative">
+        <button id="info-btn" aria-label="Round rules" class="w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold" style="border-color:var(--line); color:var(--ink); opacity:.5">i</button>
+        <div id="info-popover" class="hidden absolute right-0 top-7 w-56 p-3 rounded-lg border shadow-lg text-[11px] leading-relaxed z-30" style="background:white; border-color:var(--line); color:var(--ink); opacity:.75">
+          Unanswered questions are skipped when the clock runs out — the fastest correct answer wins the most points.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="w-full h-1.5 rounded-full mb-8 overflow-hidden" style="background:var(--paper-2)">
+    <div id="timer-bar" class="h-full rounded-full" style="width:100%; background:var(--emerald)"></div>
+  </div>
+
+  <div class="text-center mb-9 px-2">
+    <p class="text-[10px] font-bold tracking-widest uppercase mb-3" style="color:var(--gold)">History &amp; current affairs</p>
+    <h1 class="font-display text-[1.6rem] leading-snug font-semibold tracking-tight">
+      How many years ago did Kenya's Standard Gauge Railway begin commercial operation?
+    </h1>
+  </div>
+
+  <div class="space-y-3" id="answers">
+    <button class="answer-btn w-full py-4 px-5 rounded-xl border text-left flex items-center justify-between"
+            style="border-color:var(--line); background:white" data-correct="false">
+      <span class="text-[14px] font-semibold">7 years ago</span>
+      <span class="w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-bold text-[var(--ink)]/30" style="border-color:var(--line)">A</span>
+    </button>
+    <button class="answer-btn w-full py-4 px-5 rounded-xl border text-left flex items-center justify-between"
+            style="border-color:var(--line); background:white" data-correct="true">
+      <span class="text-[14px] font-semibold">9 years ago</span>
+      <span class="w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-bold text-[var(--ink)]/30" style="border-color:var(--line)">B</span>
+    </button>
+    <button class="answer-btn w-full py-4 px-5 rounded-xl border text-left flex items-center justify-between"
+            style="border-color:var(--line); background:white" data-correct="false">
+      <span class="text-[14px] font-semibold">11 years ago</span>
+      <span class="w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-bold text-[var(--ink)]/30" style="border-color:var(--line)">C</span>
+    </button>
+    <button class="answer-btn w-full py-4 px-5 rounded-xl border text-left flex items-center justify-between"
+            style="border-color:var(--line); background:white" data-correct="false">
+      <span class="text-[14px] font-semibold">13 years ago</span>
+      <span class="w-6 h-6 rounded-full border flex items-center justify-center text-[10px] font-bold text-[var(--ink)]/30" style="border-color:var(--line)">D</span>
+    </button>
+  </div>
+
+  <div id="status-line" class="mt-6 text-center text-[13px] font-semibold h-5"></div>
+
+  <div id="score-bar" class="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-[var(--line)] px-4 py-3 flex items-center justify-between text-[12px] sm:static sm:mt-auto sm:pt-8 sm:pb-0 sm:px-0 sm:border-t"
+       style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));">
+    <div>
+      <p class="text-[10px] font-bold tracking-widest uppercase text-[var(--ink)]/40 mb-0.5">Your score</p>
+      <p class="font-mono font-bold text-base" id="your-score">2,140</p>
+    </div>
+    <button id="board-toggle-2" class="text-right">
+      <p class="text-[10px] font-bold tracking-widest uppercase text-[var(--ink)]/40 mb-0.5">Rank · tap to view board</p>
+      <p class="font-mono font-bold text-base"><span style="color:var(--emerald-dark)" id="your-rank-inline">#3</span><span class="text-[var(--ink)]/40"> / 37</span></p>
+    </button>
+  </div>
+
+</main>
+
+<div id="board-overlay"></div>
+<aside id="board-panel">
+  <div class="px-5 py-4 border-b border-[var(--line)] flex items-center justify-between">
+    <div>
+      <p class="text-[10px] font-bold tracking-widest uppercase" style="color:var(--gold)">Live standings</p>
+      <h2 class="font-display text-lg font-semibold">Top performers</h2>
+    </div>
+    <button id="board-close" class="w-8 h-8 rounded-full flex items-center justify-center text-lg" style="background:var(--paper-2)">&times;</button>
+  </div>
+  <div class="flex-grow overflow-y-auto px-3 py-3 space-y-1" id="board-list"></div>
+  <div class="px-5 py-4 border-t border-[var(--line)] text-[11px] text-[var(--ink)]/40">
+    Points are awarded for correct answers only — the fastest correct response each round earns the most.
+  </div>
+</aside>
+
+<script>
+(function(){
+  const TOTAL_Q = 10;
+  const CURRENT_Q = 4;
+  const ROUND_SECONDS = 60;
+
+  const dotsWrap = document.getElementById('progress-dots');
+  for(let i=1;i<=TOTAL_Q;i++){
+    const d = document.createElement('span');
+    d.className = 'dot' + (i < CURRENT_Q ? ' answered' : i === CURRENT_Q ? ' current' : '');
+    dotsWrap.appendChild(d);
+  }
+
+  const bar = document.getElementById('timer-bar');
+  const timerNum = document.getElementById('timer-num');
+  const answers = document.querySelectorAll('.answer-btn');
+  const statusLine = document.getElementById('status-line');
+  const yourScoreEl = document.getElementById('your-score');
+  let secondsLeft = ROUND_SECONDS;
+  let elapsed = 0;
+  let answered = false;
+  let tickHandle;
+  let yourScore = 2140;
+
+  let players = [
+    {name:'Achieng M.', score:2410, you:false},
+    {name:'Brian K.', score:2260, you:false},
+    {name:'You', score:2140, you:true},
+    {name:'Faith N.', score:1980, you:false},
+    {name:'Omondi T.', score:1870, you:false},
+    {name:'Wanjiru S.', score:1640, you:false},
+  ];
+
+  function renderBoard(){
+    players.sort((a,b) => b.score - a.score);
+    const list = document.getElementById('board-list');
+    list.innerHTML = '';
+    players.forEach((p, i) => {
+      const rank = i + 1;
+      const row = document.createElement('div');
+      row.className = 'rank-row flex items-center justify-between px-3 py-2.5 rounded-lg';
+      row.style.background = p.you ? 'var(--emerald-tint)' : 'transparent';
+      const badgeBg = rank === 1 ? 'var(--gold-tint)' : 'var(--paper-2)';
+      const badgeColor = rank === 1 ? 'var(--gold)' : 'var(--ink)';
+      row.innerHTML = `
+        <div class="flex items-center gap-3">
+          <span class="rank-badge font-mono" style="background:${badgeBg}; color:${badgeColor}">${rank}</span>
+          <span class="text-[13px] font-semibold" style="color:${p.you ? 'var(--emerald-dark)' : 'var(--ink)'}">${p.name}</span>
+        </div>
+        <span class="font-mono text-[13px] font-bold">${p.score.toLocaleString()}</span>
+      `;
+      list.appendChild(row);
+    });
+    const yourIndex = players.findIndex(p => p.you);
+    document.getElementById('your-rank-chip').textContent = '#' + (yourIndex + 1);
+    document.getElementById('your-rank-inline').textContent = '#' + (yourIndex + 1);
+  }
+  renderBoard();
+
+  const overlay = document.getElementById('board-overlay');
+  const panel = document.getElementById('board-panel');
+  function openBoard(){ overlay.classList.add('open'); panel.classList.add('open'); }
+  function closeBoard(){ overlay.classList.remove('open'); panel.classList.remove('open'); }
+  document.getElementById('board-toggle').addEventListener('click', openBoard);
+  document.getElementById('board-toggle-2').addEventListener('click', openBoard);
+  document.getElementById('board-close').addEventListener('click', closeBoard);
+  overlay.addEventListener('click', closeBoard);
+
+  // --- Info popover ---
+  const infoBtn = document.getElementById('info-btn');
+  const infoPopover = document.getElementById('info-popover');
+  infoBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    infoPopover.classList.toggle('hidden');
+  });
+  document.addEventListener('click', (e) => {
+    if(!infoPopover.classList.contains('hidden') && !infoPopover.contains(e.target) && e.target !== infoBtn){
+      infoPopover.classList.add('hidden');
+    }
+  });
+
+  function paintTimer(){
+    const pct = (secondsLeft / ROUND_SECONDS) * 100;
+    bar.style.width = pct + '%';
+    timerNum.textContent = String(secondsLeft) + 's';
+    if(secondsLeft <= 10){
+      bar.style.backgroundColor = 'var(--rose)';
+      timerNum.style.color = 'var(--rose)';
+    } else if(secondsLeft <= 30){
+      bar.style.backgroundColor = 'var(--gold)';
+      timerNum.style.color = 'var(--gold)';
+    }
+  }
+
+  function lockRound(selectedBtn, timedOut){
+    clearInterval(tickHandle);
+    answered = true;
+
+    if(timedOut){
+      answers.forEach(btn => btn.classList.add('locked', 'dim'));
+      statusLine.textContent = 'Question skipped — no answer submitted in time';
+      statusLine.style.color = 'var(--rose)';
+      statusLine.innerHTML += '<br><span class="text-[11px] font-normal text-[var(--ink)]/40">Waiting for the next round…</span>';
+      return;
+    }
+
+    const gotItRight = selectedBtn.dataset.correct === 'true';
+
+    // Lock every button. Only ever reveal the option the player picked —
+    // never expose the correct answer to someone who got it wrong.
+    answers.forEach(btn => {
+      btn.classList.add('locked');
+      if(btn === selectedBtn){
+        btn.classList.add(gotItRight ? 'correct' : 'incorrect');
+      } else {
+        btn.classList.add('dim');
+      }
+    });
+
+    if(gotItRight){
+      const speedBonus = Math.max(80, 600 - elapsed * 10);
+      yourScore += speedBonus;
+      yourScoreEl.textContent = yourScore.toLocaleString();
+      const you = players.find(p => p.you);
+      you.score = yourScore;
+      renderBoard();
+      statusLine.textContent = `Correct in ${elapsed.toFixed(1)}s — +${speedBonus} points`;
+      statusLine.style.color = 'var(--emerald-dark)';
+      celebrate();
+    } else {
+      statusLine.textContent = 'Wrong answer';
+      statusLine.style.color = 'var(--rose)';
+      statusLine.innerHTML += '<br><span class="text-[11px] font-normal text-[var(--ink)]/40">Waiting for the next round…</span>';
+    }
+  }
+
+  // --- Celebration petals ---
+  function celebrate(){
+    const layer = document.getElementById('petal-layer');
+    const colors = ['#0B6B4F', '#B9862F', '#A83A3A', '#E7E5DE', '#084D39'];
+    const count = 60;
+    for(let i = 0; i < count; i++){
+      const p = document.createElement('span');
+      p.className = 'petal';
+      const size = 6 + Math.random() * 8;
+      const left = Math.random() * 100;
+      const duration = 2.6 + Math.random() * 1.8;
+      const delay = Math.random() * 0.6;
+      const drift = (Math.random() * 160 - 80) + 'px';
+      p.style.left = left + 'vw';
+      p.style.width = size + 'px';
+      p.style.height = size + 'px';
+      p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      p.style.setProperty('--drift', drift);
+      p.style.animationDuration = duration + 's';
+      p.style.animationDelay = delay + 's';
+      layer.appendChild(p);
+      setTimeout(() => p.remove(), (duration + delay) * 1000 + 200);
+    }
+  }
+
+  answers.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(answered) return;
+      elapsed = ROUND_SECONDS - secondsLeft;
+      statusLine.textContent = 'Answer locked in…';
+      statusLine.style.color = 'var(--ink)';
+      lockRound(btn, false);
+    });
+  });
+
+  tickHandle = setInterval(() => {
+    secondsLeft -= 1;
+    if(secondsLeft <= 0){
+      secondsLeft = 0;
+      paintTimer();
+      if(!answered) lockRound(null, true);
+      return;
+    }
+    paintTimer();
+  }, 1000);
+
+  paintTimer();
+})();
+</script>
+
+</body>
+</html>
